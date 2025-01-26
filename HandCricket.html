@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="HandCricket.css">
+    <title>Hand Cricket Game</title>
+</head>
+<body>
+    <h1>Hand Cricket Game</h1>
+    <p>Click a number to play your shot!</p>
+    
+    <div class="button-container">
+        <button class="choice" data-value="1">1</button>
+        <button class="choice" data-value="2">2</button>
+        <button class="choice" data-value="3">3</button>
+        <button class="choice" data-value="4">4</button>
+        <button class="choice" data-value="5">5</button>
+        <button class="choice" data-value="6">6</button>
+    </div>
+
+    <div id="score">
+        <p id="status">Game On! You are batting.</p>
+        <p>Your Score: <span id="userScore">0</span></p>
+        <p>Computer Score: <span id="computerScore">0</span></p>
+    </div>
+
+    <button id="resetButton" style="display: none;">Reset Game</button>
+
+    <footer>Enjoy playing! 🏏</footer>
+
+    <script>
+        let userScore = 0;
+        let computerScore = 0;
+        let isUserBatting = true;
+        let gameOver = false;
+
+        const resetButton = document.getElementById('resetButton');
+
+        document.querySelectorAll('.choice').forEach(button => {
+            button.addEventListener('click', function() {
+                if (gameOver) return;
+
+                const userChoice = parseInt(this.getAttribute('data-value'));
+                const computerChoice = Math.floor(Math.random() * 6) + 1;
+
+                if (isUserBatting) {
+                    if (userChoice === computerChoice) {
+                        document.getElementById('status').innerText = `You are out! You scored ${userScore} runs. Computer will bat now.`;
+                        isUserBatting = false;
+                    } else {
+                        userScore += userChoice;
+                        document.getElementById('status').innerText = `You chose ${userChoice}, Computer chose ${computerChoice}. Keep batting!`;
+                        document.getElementById('userScore').innerText = userScore;
+                    }
+                } else {
+                    if (userChoice === computerChoice) {
+                        document.getElementById('status').innerText = `Computer is out! Computer scored ${computerScore} runs.`;
+                        if (computerScore > userScore) {
+                            document.getElementById('status').innerText += ` Computer wins!`;
+                        } else {
+                            document.getElementById('status').innerText += ` You win!`;
+                        }
+                        gameOver = true;
+                        document.querySelectorAll('.choice').forEach(btn => btn.disabled = true);
+                        resetButton.style.display = 'block';
+                    } else {
+                        computerScore += computerChoice;
+                        document.getElementById('status').innerText = `You chose ${userChoice}, Computer chose ${computerChoice}. Computer is batting!`;
+                        document.getElementById('computerScore').innerText = computerScore;
+
+                        if (computerScore > userScore) {
+                            document.getElementById('status').innerText += ` Computer wins!`;
+                            gameOver = true;
+                            document.querySelectorAll('.choice').forEach(btn => btn.disabled = true);
+                            resetButton.style.display = 'block';
+                        }
+                    }
+                }
+            });
+        });
+
+        resetButton.addEventListener('click', function() {
+            userScore = 0;
+            computerScore = 0;
+            isUserBatting = true;
+            gameOver = false;
+            
+            document.getElementById('status').innerText = 'Game On! You are batting.';
+            document.getElementById('userScore').innerText = 0;
+            document.getElementById('computerScore').innerText = 0;
+            document.querySelectorAll('.choice').forEach(btn => btn.disabled = false);
+            resetButton.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
